@@ -12,3 +12,11 @@ const apiClient = axios.create({
         return response.data.articles;
       });
   }
+
+  export function getArticleById(articleId) {
+    return apiClient
+      .get(`/articles/${articleId}`)
+      .then((response) => {
+        return response.data.article;
+      });
+  }
