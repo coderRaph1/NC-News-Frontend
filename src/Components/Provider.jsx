@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { getArticles } from "../src/utils";
+import { getArticles } from "../utils";
 import Articles from "./Articles"
 
 export default function Provider () {
@@ -18,6 +18,8 @@ export default function Provider () {
     if(loading){
         return <h2>Loading...</h2>
     }
+
+    
 
     return (
         <>

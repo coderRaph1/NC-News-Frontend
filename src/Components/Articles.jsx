@@ -1,6 +1,7 @@
-import * as material from "@mui/material";
-import SingleArticle from "./SingleArticle"
-import { format } from 'date-fns';
+import * as material from "@mui/material"
+import MappedArticles from "./MappedArticles"
+import { format } from 'date-fns'
+import { Link } from 'react-router-dom'
 
 
 export default function Articles ({articles}){
@@ -14,7 +15,8 @@ export default function Articles ({articles}){
             const userFriendlyDate = format(new Date(article.created_at), "MMMM dd, yyyy, hh:mm a")
             
             return (
-                <SingleArticle
+                <Link to={`/article/${article.article_id}`} key={article.article_id} style={{ textDecoration: 'none' }}>
+                <MappedArticles
                 key={article.article_id}
                 title= {article.title}
                 author={article.author}
@@ -24,6 +26,7 @@ export default function Articles ({articles}){
                 votes ={article.votes}
                 created= {userFriendlyDate}
                 />
+                 </Link>
              )
         })}
         </material.Box>

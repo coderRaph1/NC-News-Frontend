@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-export default function SingleArticle({title, author, image, topic, created}){
+export default function MappedArticles({title, author, image, topic, created}){
     return (
         <Card sx={{ maxWidth: 400, minWidth: 400, marginBottom: 1 }}>
         <CardMedia sx={{ height: 140 }} image={image} title="Article image" />
