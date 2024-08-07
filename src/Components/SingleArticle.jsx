@@ -8,6 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import VoteButton from './VoteButton'
 
 export default function SingleArticle(){
 
@@ -15,6 +16,7 @@ export default function SingleArticle(){
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
+  const [totalVotes, setTotalVotes] = useState(0);
 
   useEffect(() => {
     Promise.all([getArticleById(articleId), getCommentsById(articleId)])
@@ -22,12 +24,20 @@ export default function SingleArticle(){
       setArticle(articleData);
       setComments(commentsData);
       setLoading(false);
+
+      const commentsVotes = commentsData.reduce((sum, comment) => sum + comment.votes, 0)
+        setTotalVotes(articleData.votes + commentsVotes)
     })
+
     .catch((error) => {
       console.error("Error fetching data:", error);
       setLoading(false);
     });
 }, [articleId]);
+
+const handleVoteUpdate = (updatedVotes) => {
+  setTotalVotes((prevTotalVotes) => prevTotalVotes + updatedVotes)
+}
 
   if (loading) {
     return (
@@ -75,11 +85,12 @@ export default function SingleArticle(){
               Topic: {article.topic}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom sx={{ fontFamily: 'Roboto, sans-serif' }}>
-              Votes: {article.votes}
+              Votes: {totalVotes}
             </Typography>
             <Typography variant="body1" paragraph sx={{ fontFamily: 'Roboto, sans-serif' }}>
               {article.body}
             </Typography>
+            <VoteButton articleId={articleId} initialVotes={article.votes} onVote={handleVoteUpdate} />
           </CardContent>
         </Card>
 
@@ -117,10 +128,6 @@ export default function SingleArticle(){
           ))
         )}
       </Box>
-
       </Box>
   );
-
 }
-
-// just added a scroll box for comments!! Looks insane!
