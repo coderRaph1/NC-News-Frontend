@@ -28,3 +28,9 @@ const apiClient = axios.create({
      return (response.data.comments)
     })
   }
+
+  export function voteOnArticle(articleId, voteChange) {
+    return apiClient.patch(`/articles/${articleId}`, { inc_votes: voteChange }).then((response) => {
+      return response.data.article.votes;
+    });
+  }
