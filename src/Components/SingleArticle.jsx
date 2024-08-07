@@ -46,6 +46,7 @@ export default function SingleArticle(){
     <Box sx={{
         display: 'flex',
         justifyContent: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
         height: '100vh',
         background: 'linear-gradient(to right, #9796f0, #fbc7d4)',
@@ -55,7 +56,7 @@ export default function SingleArticle(){
           maxWidth: 800,
           boxShadow: 3,
           borderRadius: 2,
-          overflow: 'hidden'
+          overflowY: 'auto'
         }}>
           <CardMedia
             component="img"
@@ -88,6 +89,7 @@ export default function SingleArticle(){
         maxHeight: '400px',
         overflowY: 'auto',
         padding: 2,
+        marginTop: 5,
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: 2,
         marginBottom: 4
