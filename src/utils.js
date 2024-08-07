@@ -20,3 +20,11 @@ const apiClient = axios.create({
         return response.data.article;
       });
   }
+
+  export function getCommentsById (articleId){
+    return apiClient
+    .get(`/articles/${articleId}/comments`)
+    .then((response) => {
+     return (response.data.comments)
+    })
+  }
