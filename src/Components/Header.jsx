@@ -6,7 +6,7 @@ export default function Header() {
     <>
      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 4 }}>
       <Typography variant="h1" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
-        North Coders News Stand
+        Northcoders News Stand
       </Typography>
       <Typography
         variant="body1"
@@ -30,3 +30,4 @@ export default function Header() {
     </>
   );
 }
+

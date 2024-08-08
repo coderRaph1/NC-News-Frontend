@@ -34,3 +34,15 @@ const apiClient = axios.create({
       return response.data.article.votes;
     });
   }
+
+  export function postNewComment(articleId, username, comment) {
+
+    const data = {username: username, body: comment}
+    
+console.log(data, articleId)
+    return apiClient.post(`/articles/${articleId}/comments`, data)
+      .then((response) => {
+        return response.data
+      
+      });
+  }

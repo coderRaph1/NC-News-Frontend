@@ -24,7 +24,7 @@ export default function VoteButton ({ articleId, initialVotes, onVote }) {
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
       <Button variant="contained" color="primary" onClick={() => handleVote(1)}>Vote Up</Button>
       <Typography variant="body1" sx={{ fontFamily: 'Roboto, sans-serif', marginX: 2 }}>
-        {votes} Vote/s Made
+        Your Vote Count: {votes}
       </Typography>
       <Button variant="contained" color="secondary" onClick={() => handleVote(-1)}>Vote Down</Button>
     </Box>

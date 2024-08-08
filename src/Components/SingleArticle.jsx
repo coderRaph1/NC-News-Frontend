@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
@@ -9,37 +9,54 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import VoteButton from './VoteButton'
+import NewCommentForm from './NewCommentForm';
 
-export default function SingleArticle(){
-
+export default function SingleArticle() {
   const { articleId } = useParams();
   const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [articleLoading, setArticleLoading] = useState(true);
   const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
   const [totalVotes, setTotalVotes] = useState(0);
 
   useEffect(() => {
-    Promise.all([getArticleById(articleId), getCommentsById(articleId)])
-    .then(([articleData, commentsData]) => {
-      setArticle(articleData);
-      setComments(commentsData);
-      setLoading(false);
 
-      const commentsVotes = commentsData.reduce((sum, comment) => sum + comment.votes, 0)
-        setTotalVotes(articleData.votes + commentsVotes)
-    })
+    getArticleById(articleId)
+      .then(articleData => {
+        setArticle(articleData)
+        setTotalVotes(prevVotes => prevVotes + articleData.votes)
+        setArticleLoading(false)
+      })
+      .catch(error => {
+        console.error("Error fetching article:", error)
+        setArticle(null)
+        setArticleLoading(false)
+      });
 
-    .catch((error) => {
-      console.error("Error fetching data:", error);
-      setLoading(false);
-    });
-}, [articleId]);
+    
+    getCommentsById(articleId)
+      .then(commentsData => {
+        setComments(commentsData)
+        const commentsVotes = commentsData.reduce((sum, comment) => sum + comment.votes, 0)
+        setTotalVotes(prevVotes => prevVotes + commentsVotes)
+        setCommentsLoading(false)
+      })
+      .catch(error => {
+        console.error("Error fetching comments:", error)
+        setComments([])
+        setCommentsLoading(false)
+      })
+  }, [articleId])
 
 const handleVoteUpdate = (updatedVotes) => {
   setTotalVotes((prevTotalVotes) => prevTotalVotes + updatedVotes)
 }
 
-  if (loading) {
+const handleAddComment = (newComment) => {
+  setComments((prevComments) => [newComment, ...prevComments])
+};
+
+  if (articleLoading || commentsLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -60,10 +77,11 @@ const handleVoteUpdate = (updatedVotes) => {
         alignItems: 'center',
         height: '100vh',
         background: 'linear-gradient(to right, #9796f0, #fbc7d4)',
-        padding: 4
+        padding: 1
       }}>
         <Card sx={{
           maxWidth: 800,
+          minHeight: 700,
           boxShadow: 3,
           borderRadius: 2,
           overflowY: 'auto'
@@ -97,17 +115,18 @@ const handleVoteUpdate = (updatedVotes) => {
         <Box sx={{
         width: '100%',
         maxWidth: '800px',
-        maxHeight: '400px',
+        minHeight: '200px',
         overflowY: 'auto',
         padding: 2,
-        marginTop: 5,
+        marginTop: 2,
         backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: 2,
-        marginBottom: 4
+        marginBottom: 0
       }}>
         <Typography variant="h5" component="h2" gutterBottom sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}>
           Comments
         </Typography>
+        <NewCommentForm articleId={articleId} setComments = {setComments} />
         {(comments.map((comment) => (
             <Card key={comment.comment_id} sx={{ marginBottom: 2 }}>
               <CardContent>
@@ -121,7 +140,7 @@ const handleVoteUpdate = (updatedVotes) => {
                   {comment.body}
                 </Typography>
                 <Typography variant="body1" sx={{ fontFamily: 'Roboto, sans-serif' }}>
-                 Votes: {comment.votes}
+                 Vote: {comment.votes}
                 </Typography>
               </CardContent>
             </Card>
