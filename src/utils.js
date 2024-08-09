@@ -39,10 +39,16 @@ const apiClient = axios.create({
 
     const data = {username: username, body: comment}
     
-console.log(data, articleId)
     return apiClient.post(`/articles/${articleId}/comments`, data)
       .then((response) => {
         return response.data
-      
       });
+  }
+
+  export function deleteComment(commentId){
+
+    return apiClient.delete(`/comments/${commentId}`)
+    .then((response) => {
+      console.log(response)
+    })
   }
