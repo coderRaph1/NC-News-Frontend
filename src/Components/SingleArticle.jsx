@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { getArticleById, getCommentsById} from '../utils';
+import { deleteComment, getArticleById, getCommentsById} from '../utils';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -18,6 +18,9 @@ export default function SingleArticle() {
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [totalVotes, setTotalVotes] = useState(0);
+  const [username, setUsername]= useState("tickle122")
+  const [deleteMessage, setDeleteMessage] = useState('')
+  const [currentCommentId, setCurrentCommentId] = useState(null)
 
   useEffect(() => {
 
@@ -37,8 +40,6 @@ export default function SingleArticle() {
     getCommentsById(articleId)
       .then(commentsData => {
         setComments(commentsData)
-        const commentsVotes = commentsData.reduce((sum, comment) => sum + comment.votes, 0)
-        setTotalVotes(prevVotes => prevVotes + commentsVotes)
         setCommentsLoading(false)
       })
       .catch(error => {
@@ -52,9 +53,21 @@ const handleVoteUpdate = (updatedVotes) => {
   setTotalVotes((prevTotalVotes) => prevTotalVotes + updatedVotes)
 }
 
-const handleAddComment = (newComment) => {
-  setComments((prevComments) => [newComment, ...prevComments])
-};
+const handleDelete = (commentId) => {
+  setCurrentCommentId(commentId)
+  deleteComment(commentId).then(() => {
+    setDeleteMessage('deleting comment!')
+    setTimeout(() => {
+      setComments((currComments) => {
+        return currComments.filter((comment) => comment.comment_id !== commentId )
+      
+      })
+      
+    }, 1000);
+  }).catch(() => {
+    setDeleteMessage('Error deleting your comment')
+  })
+}
 
   if (articleLoading || commentsLoading) {
     return (
@@ -126,7 +139,7 @@ const handleAddComment = (newComment) => {
         <Typography variant="h5" component="h2" gutterBottom sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}>
           Comments
         </Typography>
-        <NewCommentForm articleId={articleId} setComments = {setComments} />
+        <NewCommentForm articleId={articleId} setComments = {setComments} username = {username} />
         {(comments.map((comment) => (
             <Card key={comment.comment_id} sx={{ marginBottom: 2 }}>
               <CardContent>
@@ -142,6 +155,11 @@ const handleAddComment = (newComment) => {
                 <Typography variant="body1" sx={{ fontFamily: 'Roboto, sans-serif' }}>
                  Vote: {comment.votes}
                 </Typography>
+                {comment.author === username ? <button onClick={() => handleDelete(comment.comment_id) }>
+                  Delete Comment
+                </button> : null}
+                {comment.author === username && comment.comment_id === currentCommentId ? <p>{deleteMessage}</p> : null}
+                
               </CardContent>
             </Card>
           ))
